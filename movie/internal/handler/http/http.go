@@ -2,7 +2,6 @@ package http
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 
@@ -23,7 +22,9 @@ func New(ctrl *movie.Controller) *Handler {
 func (h *Handler) GetMovieDetails(w http.ResponseWriter, req *http.Request) {
 	id := req.FormValue("id")
 	details, err := h.ctrl.Get(req.Context(), id)
-	if err != nil && errors.Is(err, movie.ErrNotFound) {
+	log.Printf(">>> %v >>>\n", err)
+	//if err != nil && errors.Is(err, movie.ErrNotFound) {
+	if err != nil && err.Error() == "not found" {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	} else if err != nil {
